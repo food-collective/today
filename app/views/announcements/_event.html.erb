@@ -1,0 +1,32 @@
+<% today = event.eventtime && event.eventtime.to_date == Time.zone.today %>
+<li class="event<%= ' event--today' if today %><%= ' event--past' if past %>">
+  <div class="datebox" aria-hidden="true">
+    <% if event.eventtime %>
+      <div class="datebox__mon"><%= event.eventtime.strftime('%b') %></div>
+      <div class="datebox__day"><%= event.eventtime.day %></div>
+      <div class="datebox__dow"><%= today ? "Today" : event.eventtime.strftime('%a') %></div>
+    <% else %>
+      <div class="datebox__mon">Date</div>
+      <div class="datebox__day">?</div>
+      <div class="datebox__dow">TBA</div>
+    <% end %>
+  </div>
+  <div>
+    <p class="event__title"><%= event.message %></p>
+    <p class="event__line">
+      <%= icon(:clock, size: 16) %>
+      <span>
+        <% if event.eventtime %>
+          <span class="visually-hidden"><%= event.eventtime.strftime('%A, %B %-d') %>,</span>
+          <%= event_time_label(event) %><%= ", #{event.eventtime.year}" if event.eventtime.year != Time.zone.today.year %>
+        <% else %>
+          Date to be announced
+        <% end %>
+      </span>
+    </p>
+    <% if (place = event_location(event)) %>
+      <p class="event__line"><%= icon(:pin, size: 16) %><span><%= place %></span></p>
+    <% end %>
+    <p class="event__by">Posted by <%= event_author(event, @author_names) %></p>
+  </div>
+</li>

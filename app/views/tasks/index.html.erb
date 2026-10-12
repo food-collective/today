@@ -1,0 +1,122 @@
+<% content_for :title, "Tasks" %>
+<main>
+  <div class="wrap">
+    <%= render "shared/flash" %>
+
+    <div class="page-head">
+      <div>
+        <p class="eyebrow"><%= today_label %></p>
+        <h1 class="page-title">Today’s tasks</h1>
+      </div>
+    </div>
+
+    <%= render "shift_task" %>
+
+    <% total_today = @open_tasks.size + @done_today %>
+    <section class="card status" aria-label="Progress">
+      <div class="status__top">
+        <p class="status__count">
+          <%= pluralize(@open_tasks.size, "task") %> to do
+          <span>· <%= @done_today %> done today</span>
+        </p>
+        <details class="who">
+          <summary>
+            <%= icon(:user, size: 16) %>
+            Checking off as <strong><%= acting_name %></strong>
+            <span class="link">Change</span>
+          </summary>
+          <%= form_with url: checking_as_path, method: :post, class: "who__form" do %>
+            <%= hidden_field_tag :category, params[:category] %>
+            <label for="checking-as-name" class="visually-hidden">Your name</label>
+            <%= text_field_tag :name, nil, id: "checking-as-name", class: "input", list: "member-names",
+                  placeholder: "Start typing your name", autocomplete: "off" %>
+            <datalist id="member-names">
+              <% @member_names.each do |member_name| %><option value="<%= member_name %>"></option><% end %>
+            </datalist>
+            <%= button_tag "Use this name", class: "btn btn--dark btn--small" %>
+          <% end %>
+        </details>
+      </div>
+      <div class="bar" role="progressbar" aria-label="Done today" aria-valuemin="0" aria-valuemax="<%= total_today %>" aria-valuenow="<%= @done_today %>">
+        <span style="width: <%= total_today.zero? ? 0 : (100.0 * @done_today / total_today).round %>%"></span>
+      </div>
+    </section>
+
+    <nav class="filters" aria-label="Filter by category">
+      <%= link_to tasks_path, class: "chip", aria: { current: @filter.nil? ? "true" : nil } do %>
+        All <span class="chip__n"><%= @category_counts.values.sum %></span>
+      <% end %>
+      <% @categories.each do |category| %>
+        <%= link_to tasks_path(category: category), class: "chip", aria: { current: @filter == category ? "true" : nil } do %>
+          <%= category %> <span class="chip__n"><%= @category_counts.fetch(category, 0) %></span>
+        <% end %>
+      <% end %>
+    </nav>
+
+    <details class="add" id="add-task">
+      <summary class="btn btn--primary btn--block"><%= icon(:plus) %> Add a task</summary>
+      <div class="card add__form">
+        <h2>Add a task</h2>
+        <%= form_with url: tasks_path(category: params[:category]), method: :post do %>
+          <div class="field">
+            <%= label_tag :task_name, "What needs doing?" %>
+            <%= text_field_tag :task_name, nil, class: "input", required: true, maxlength: 200,
+                  placeholder: "e.g. Break down cardboard boxes" %>
+          </div>
+          <div class="field">
+            <%= label_tag :task_description, "Details (optional)" %>
+            <%= text_area_tag :task_description, nil, class: "input", rows: 3,
+                  placeholder: "Where things are, how to do it, who to ask" %>
+          </div>
+          <% if @categories.any? %>
+            <div class="field">
+              <%= label_tag :task_category, "Category" %>
+              <%= select_tag :task_category, options_for_select(@categories, @filter), class: "input" %>
+            </div>
+          <% end %>
+          <fieldset class="field fieldset">
+            <legend class="label">Priority</legend>
+            <div class="segmented">
+              <label><%= radio_button_tag :priority, 1, true %> <span class="dot dot--calm"></span> When you have time</label>
+              <label><%= radio_button_tag :priority, 3, false %> <span class="dot dot--hot"></span> High priority</label>
+            </div>
+          </fieldset>
+          <div class="form-actions">
+            <%= button_tag "Add task", class: "btn btn--primary" %>
+            <%= link_to "Cancel", tasks_path(category: params[:category]), class: "btn btn--ghost" %>
+          </div>
+        <% end %>
+      </div>
+    </details>
+
+    <% if @open_tasks.empty? %>
+      <div class="card empty">
+        <%= image_tag "bsfc-lips-112.webp", alt: "", width: 96, height: 96 %>
+        <p class="empty__title">All caught up!</p>
+        <p><%= @filter ? "Nothing left in #{@filter}." : "Nothing on the list right now. Add a task if you spot something." %></p>
+      </div>
+    <% else %>
+      <% @open_tasks.group_by(&:priority).sort_by { |priority, _| -priority.to_i }.each do |priority, tasks| %>
+        <h2 class="section-title">
+          <%= task_section_title(priority) %>
+          <span class="pill <%= priority == 3 ? 'pill--hot' : (priority == 2 ? 'pill--green' : '') %>"><%= tasks.size %></span>
+        </h2>
+        <ul class="tasks">
+          <%= render partial: "task", collection: tasks %>
+        </ul>
+      <% end %>
+    <% end %>
+
+    <% if @done_tasks.any? %>
+      <details class="done">
+        <summary>
+          Done this week <span class="pill pill--green"><%= @done_tasks.size %></span>
+          <%= icon(:chevron, size: 18) %>
+        </summary>
+        <ul class="tasks">
+          <%= render partial: "task", collection: @done_tasks %>
+        </ul>
+      </details>
+    <% end %>
+  </div>
+</main>

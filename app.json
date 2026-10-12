@@ -1,0 +1,75 @@
+{
+  "name": "Food Collective Today",
+  "description": "Tasks and events for Berkeley Student Food Collective shifts, connected to Airtable.",
+  "keywords": [
+    "rails",
+    "airtable",
+    "co-op"
+  ],
+  "stack": "heroku-22",
+  "buildpacks": [
+    {
+      "url": "heroku/ruby"
+    }
+  ],
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "basic"
+    }
+  },
+  "addons": [
+    {
+      "plan": "heroku-postgresql:essential-0"
+    }
+  ],
+  "env": {
+    "airtable_api_key": {
+      "description": "Your Airtable token. Copy it from your current app: Settings → Reveal Config Vars → airtable_api_key.",
+      "required": true
+    },
+    "AIRTABLE_BASE_ID": {
+      "description": "Airtable base the app reads from.",
+      "value": "appTJKLBbpiKXi1oE"
+    },
+    "AIRTABLE_USERS_TABLE_ID": {
+      "description": "Members table.",
+      "value": "tbllIlIfv7CmyJMkd"
+    },
+    "AIRTABLE_TASKS_TABLE_ID": {
+      "description": "Tasks table (for the shift task banner).",
+      "value": "tblQHNKz64tL8kImb"
+    },
+    "AIRTABLE_ANNOUNCEMENTS_TABLE_ID": {
+      "description": "Events table.",
+      "value": "tbl2QjfMuAkpLmFTQ"
+    },
+    "AIRTABLE_SHIFT_TASK_VIEW": {
+      "description": "Optional. Name of the Airtable view whose top task shows as 'This shift's main task'. Leave blank to show the newest task from the last 12 hours.",
+      "required": false
+    },
+    "TASK_CATEGORIES": {
+      "description": "Task categories, separated by commas.",
+      "value": "Inventory, Cleanliness, Beautification"
+    },
+    "ADMIN_PASSWORD": {
+      "description": "Password for the Admin settings page. A random one is made for you; find it later under Settings → Config Vars.",
+      "generator": "secret"
+    },
+    "SECRET_KEY_BASE": {
+      "description": "Keeps logins secure. Made for you.",
+      "generator": "secret"
+    },
+    "RAILS_SERVE_STATIC_FILES": {
+      "description": "Lets the app serve its own fonts, images and styles.",
+      "value": "enabled"
+    },
+    "RAILS_LOG_TO_STDOUT": {
+      "description": "Sends logs to Heroku's log viewer.",
+      "value": "enabled"
+    }
+  },
+  "scripts": {
+    "postdeploy": "bundle exec rails db:migrate db:seed"
+  }
+}

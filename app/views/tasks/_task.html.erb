@@ -1,0 +1,25 @@
+<li class="<%= task_card_class(task) %>" id="task-<%= task.id %>">
+  <%= button_to checkmark_path(id: task.id, check_type: (task.completed ? "unchecking" : "checking"), category: params[:category]),
+        class: "task__check", form: { data: { keep_scroll: true } },
+        aria: { label: (task.completed ? "Mark “#{task.name}” as not done" : "Mark “#{task.name}” as done") } do %>
+    <%= icon(:check) %>
+  <% end %>
+
+  <div class="task__main">
+    <p class="task__name"><%= task.name %></p>
+    <% if task.description.present? && !task.completed %>
+      <div class="task__desc"><%= task_description(task) %></div>
+    <% end %>
+    <div class="task__meta">
+      <% if task.priority == 3 && !task.completed %><span class="pill pill--hot">High priority</span><% end %>
+      <% if task.category.present? %><span class="pill"><%= task.category %></span><% end %>
+      <span><%= task.completed ? task_done_line(task) : task_added_line(task) %></span>
+    </div>
+  </div>
+
+  <% unless task.completed %>
+    <%= link_to edit_task_path(task, category: params[:category]), class: "task__edit", aria: { label: "Edit “#{task.name}”" } do %>
+      <%= icon(:pencil) %>
+    <% end %>
+  <% end %>
+</li>

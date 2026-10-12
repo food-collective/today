@@ -1,0 +1,11 @@
+<% flash.each do |type, message| %>
+  <% next if type.to_s == "undo_task_id" || message.blank? %>
+  <div class="<%= flash_class(type) %><%= " flash--toast" if type.to_s == "success" %>" role="status">
+    <% if type.to_s == "success" %><%= icon(:check, size: 20) %><% end %>
+    <span class="flash__text"><%= message %></span>
+    <% if type.to_s == "success" && flash[:undo_task_id] %>
+      <%= button_to "Undo", checkmark_path(id: flash[:undo_task_id], check_type: "unchecking", category: params[:category]),
+            class: "btn btn--ghost", form: { data: { keep_scroll: true } } %>
+    <% end %>
+  </div>
+<% end %>

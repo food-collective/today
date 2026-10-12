@@ -1,0 +1,9 @@
+<% if @shift_task %>
+  <section class="shift" id="shift-task" aria-labelledby="shift-task-title">
+    <p class="shift__label"><%= icon(:star, size: 16) %> This shift’s main task</p>
+    <h2 class="shift__title" id="shift-task-title"><%= @shift_task.name %></h2>
+    <% if @shift_task.description.present? %>
+      <div class="shift__body"><%= airtable_markdown(@shift_task.description) %></div>
+    <% end %>
+  </section>
+<% end %>

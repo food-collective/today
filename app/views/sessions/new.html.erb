@@ -1,0 +1,23 @@
+<% content_for :title, "Log in" %>
+<main class="login">
+  <div class="login__card">
+    <%= image_tag "bsfc-lips-440.webp", alt: "Berkeley Student Food Collective", class: "login__logo", width: 220, height: 220 %>
+    <h1 class="login__title">Food Collective Today</h1>
+    <p class="login__sub">Tasks and events for everyone on shift.</p>
+
+    <%= render "shared/flash" %>
+
+    <%= form_with scope: :session, url: login_path, class: "card", data: { turbo: false } do |f| %>
+      <div class="field">
+        <%= f.label :email, "Your member email" %>
+        <%= f.email_field :email, class: "input", placeholder: "you@berkeley.edu", autocomplete: "email",
+              autocapitalize: "off", spellcheck: false, required: true, autofocus: true %>
+      </div>
+      <label class="check-line">
+        <%= f.check_box :remember, { checked: true }, "1", "0" %>
+        Keep me signed in on this device
+      </label>
+      <%= f.button "Let’s go", class: "btn btn--primary btn--block", type: "submit" %>
+    <% end %>
+  </div>
+</main>

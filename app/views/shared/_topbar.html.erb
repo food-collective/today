@@ -1,0 +1,34 @@
+<header class="topbar">
+  <div class="wrap topbar__row">
+    <%= link_to tasks_path, class: "brand", aria: { label: "Food Collective Today, home" } do %>
+      <%= image_tag "bsfc-lips-112.webp", alt: "", width: 44, height: 44 %>
+      <span class="brand__name">Food Collective <span>Today</span></span>
+    <% end %>
+
+    <details class="menu">
+      <summary aria-label="Account menu">
+        <span class="avatar"><%= initials(current_user.name) %></span>
+        <span class="menu__name"><%= current_user.name %></span>
+        <%= icon(:chevron, size: 16) %>
+      </summary>
+      <div class="menu__panel">
+        <div class="menu__who">Signed in as <strong><%= current_user.email %></strong></div>
+        <%= link_to settings_path do %><%= icon(:gear) %> Admin settings<% end %>
+        <%= button_to logout_path do %><%= icon(:logout) %> Log out<% end %>
+      </div>
+    </details>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="Sections">
+  <div class="wrap tabs__row">
+    <%= link_to tasks_path, class: "tab", aria: { current: (controller_name == "tasks" ? "page" : nil) } do %>
+      Tasks
+      <% if open_task_count.positive? %><span class="tab__count"><%= open_task_count %></span><% end %>
+    <% end %>
+    <%= link_to announcements_path, class: "tab", aria: { current: (controller_name == "announcements" ? "page" : nil) } do %>
+      Events
+      <% if upcoming_event_count.positive? %><span class="tab__count"><%= upcoming_event_count %></span><% end %>
+    <% end %>
+  </div>
+</nav>

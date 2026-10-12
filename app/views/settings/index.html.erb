@@ -1,0 +1,46 @@
+<% content_for :title, "Admin settings" %>
+<main>
+  <div class="wrap settings">
+    <div>
+      <%= link_to tasks_path, class: "back" do %><%= icon(:back, size: 18) %> Back to tasks<% end %>
+      <%= render "shared/flash" %>
+      <h1 class="page-title">Admin settings</h1>
+    </div>
+
+    <section class="card card--pad">
+      <h2>Airtable connection</h2>
+      <p class="lead">Where the app reads members, tasks and events. You’ll need the admin password to save changes.</p>
+      <%= form_with url: settings_path, method: :post do %>
+        <div class="field">
+          <%= label_tag :airtable_base_id, "Airtable base ID" %>
+          <%= text_field_tag :airtable_base_id, @setting&.airtable_base_id, class: "input", spellcheck: false %>
+        </div>
+        <div class="field">
+          <%= label_tag :users_table_id, "Members table ID" %>
+          <%= text_field_tag :users_table_id, @setting&.users_table_id, class: "input", spellcheck: false %>
+        </div>
+        <div class="field">
+          <%= label_tag :tasks_table_id, "Tasks table ID" %>
+          <%= text_field_tag :tasks_table_id, @setting&.tasks_table_id, class: "input", spellcheck: false %>
+        </div>
+        <div class="field">
+          <%= label_tag :announcements_table_id, "Events table ID" %>
+          <%= text_field_tag :announcements_table_id, @setting&.announcements_table_id, class: "input", spellcheck: false %>
+        </div>
+        <div class="field">
+          <%= label_tag :categories, "Task categories" %>
+          <%= text_field_tag :categories, @setting&.categories, class: "input" %>
+          <span class="hint">Separate with commas, for example: Inventory, Cleanliness, Beautification</span>
+        </div>
+        <div class="field">
+          <%= label_tag :password, "Admin password" %>
+          <%= password_field_tag :password, nil, class: "input", autocomplete: "current-password" %>
+        </div>
+        <div class="form-actions">
+          <%= button_tag "Save settings", class: "btn btn--primary", id: "submit-update-settings" %>
+          <%= link_to "Change admin password", update_password_path %>
+        </div>
+      <% end %>
+    </section>
+  </div>
+</main>

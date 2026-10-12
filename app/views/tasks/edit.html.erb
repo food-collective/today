@@ -1,0 +1,47 @@
+<% content_for :title, "Edit task" %>
+<main>
+  <div class="wrap">
+    <%= link_to tasks_path(category: params[:category]), class: "back" do %><%= icon(:back, size: 18) %> Back to tasks<% end %>
+
+    <div class="card card--pad">
+      <h1 class="card-title">Edit task</h1>
+      <%= form_with url: task_path(@task, category: params[:category]), method: :patch do %>
+        <div class="field">
+          <%= label_tag :task_name, "Task" %>
+          <%= text_field_tag :task_name, @task.name, class: "input", required: true, maxlength: 200 %>
+        </div>
+        <div class="field">
+          <%= label_tag :task_description, "Details" %>
+          <%= text_area_tag :task_description, @task.description, class: "input", rows: 4 %>
+        </div>
+        <% if @categories.any? %>
+          <div class="field">
+            <%= label_tag :task_category, "Category" %>
+            <%= select_tag :task_category, options_for_select(@categories, @task.category), class: "input" %>
+          </div>
+        <% end %>
+        <% unless @task.priority == 2 %>
+        <fieldset class="field fieldset">
+          <legend class="label">Priority</legend>
+          <div class="segmented">
+            <label><%= radio_button_tag :priority, 1, @task.priority != 3 %> <span class="dot dot--calm"></span> When you have time</label>
+            <label><%= radio_button_tag :priority, 3, @task.priority == 3 %> <span class="dot dot--hot"></span> High priority</label>
+          </div>
+        </fieldset>
+        <% end %>
+        <div class="form-actions">
+          <%= button_tag "Save changes", class: "btn btn--primary" %>
+          <%= link_to "Cancel", tasks_path(category: params[:category]), class: "btn btn--ghost" %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="card card--pad stack-gap">
+      <p class="muted-line">Added by <%= @task.user_add.presence || "someone" %><%= " on #{@task.added.strftime('%b %-d, %Y')}" if @task.added %>.</p>
+      <%= button_to task_path(@task, category: params[:category]), method: :delete, class: "btn btn--danger-text",
+            form: { data: { turbo_confirm: "Delete “#{@task.name}”? This can’t be undone." } } do %>
+        Delete this task
+      <% end %>
+    </div>
+  </div>
+</main>

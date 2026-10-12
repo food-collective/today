@@ -1,0 +1,37 @@
+<% content_for :title, "Events" %>
+<main>
+  <div class="wrap">
+    <%= render "shared/flash" %>
+
+    <div class="page-head">
+      <div>
+        <p class="eyebrow"><%= today_label %></p>
+        <h1 class="page-title">Coming up</h1>
+      </div>
+    </div>
+
+    <% if @upcoming.any? %>
+      <ul class="events">
+        <%= render partial: "event", collection: @upcoming, locals: { past: false } %>
+      </ul>
+    <% else %>
+      <div class="card empty">
+        <%= image_tag "bsfc-lips-112.webp", alt: "", width: 96, height: 96 %>
+        <p class="empty__title">Nothing on the calendar yet</p>
+        <p>New events from Airtable show up here within about 10 minutes.</p>
+      </div>
+    <% end %>
+
+    <% if @past.any? %>
+      <details class="done">
+        <summary>
+          Recent events <span class="pill"><%= @past.size %></span>
+          <%= icon(:chevron, size: 18) %>
+        </summary>
+        <ul class="events">
+          <%= render partial: "event", collection: @past, locals: { past: true } %>
+        </ul>
+      </details>
+    <% end %>
+  </div>
+</main>
